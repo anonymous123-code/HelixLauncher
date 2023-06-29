@@ -127,7 +127,7 @@ async fn launch_instance(
     )
     .await?;
     if !dry_run {
-        prepared.launch(true).await?.wait().await?;
+        prepared.launch().await?.wait().await?;
     } else {
         println!("{:?}", prepared);
     }
