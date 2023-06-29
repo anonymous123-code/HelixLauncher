@@ -45,7 +45,7 @@ impl InstancesModel {
                         .await
                         .unwrap();
 
-                prepared.launch(true).await.unwrap();
+                prepared.launch().await.unwrap();
             });
         });
     }

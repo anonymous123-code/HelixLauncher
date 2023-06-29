@@ -36,14 +36,13 @@ pub struct PreparedLaunch {
     pub classpath: Vec<String>,
     pub main_class: String,
     pub args: Vec<String>,
+    pub stdin: Stdio,
+    pub stdout: Stdio,
+    pub stderr: Stdio,
 }
 
 impl PreparedLaunch {
-    // TODO: add better API for log output
-    pub async fn launch(&self, inherit_out: bool) -> Result<Child, LaunchError> {
-        if !inherit_out {
-            todo!();
-        }
+    pub async fn launch(self) -> Result<Child, LaunchError> {
         let classpath = generate_classpath(&self.classpath);
         // TODO: hook up javalaunch
         Ok(Command::new(&self.java_path)
@@ -53,9 +52,9 @@ impl PreparedLaunch {
             .arg(classpath)
             .arg(&self.main_class)
             .args(&self.args)
-            .stdin(Stdio::null())
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
+            .stdin(self.stdin)
+            .stdout(self.stdout)
+            .stderr(self.stderr)
             .spawn()?)
     }
 }
@@ -314,6 +313,9 @@ pub async fn prepare_launch(
             })
             .collect(),
         working_directory: game_dir,
+        stdin: Stdio::null(),
+        stdout: Stdio::inherit(),
+        stderr: Stdio::inherit(),
     })
 }
 
